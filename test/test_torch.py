@@ -5374,8 +5374,8 @@ else:
                         check_equal(torch.tensor(True), y, x)
 
 
-    @skipIfTorchInductor("FIXME")
-    def test_hook_remove(self, device):
+    @dtypes(torch.half, torch.float)
+    def test_hook_remove(self, device, dtype):
         # Reference: https://github.com/pytorch/pytorch/issues/58354
         def _test_helper(remove_hook):
             def install_hook(tensor):
@@ -5387,7 +5387,7 @@ else:
                     return torch.zeros_like(tensor)
                 handle = tensor.register_hook(hook)
 
-            t = torch.ones((1, 5), device=device, requires_grad=True)
+            t = make_tensor((1, 5), dtype=dtype, device=device, requires_grad=True)
             install_hook(t)
 
             # First call to backward
